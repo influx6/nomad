@@ -5,6 +5,10 @@ executors:
     working_directory: ~/go/src/github.com/hashicorp/nomad
     docker:
       - image: dantoml/nomad-build-image:latest
+  go-vm:
+    working_directory: ~/go/src/github.com/hashicorp/nomad
+    machine:
+      image: ubuntu-1604:201903-01
   docker-builder:
     working_directory: ~/go/src/github.com/hashicorp/nomad
     machine: true # TODO: Find latest docker image id
@@ -39,7 +43,8 @@ jobs:
       GOMAXPROCS: 1
     steps:
       - checkout
-      - run: make test
+      - run: make dev
+      - run: gotestsum -f short-verbose $GOTEST_PKGS -- -timeout 15m
       - store_test_results:
           path: /tmp/results.xml
 
