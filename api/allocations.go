@@ -79,6 +79,17 @@ func (a *Allocations) GC(alloc *Allocation, q *QueryOptions) error {
 	return err
 }
 
+func (a *Allocations) Restart(alloc *Allocation, taskName string, q *QueryOptions) error {
+	// TODO(dani): We can't depend on nomad/structs here any more, and I don't want
+	//             to duplicate a single use definition. When we move all of Nomad
+	//             to modules, we should fix this.
+	req := map[string]string{"TaskName": taskName}
+
+	var resp struct{}
+	_, err := a.client.putQuery("/v1/client/allocation/"+alloc.ID+"/restart", req, &resp, q)
+	return err
+}
+
 // Allocation is used for serialization of allocations.
 type Allocation struct {
 	ID                    string
