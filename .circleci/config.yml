@@ -5,7 +5,7 @@ executors:
     working_directory: ~/go/src/github.com/hashicorp/nomad
     docker:
       - image: dantoml/nomad-build-image:latest
-  go-vm:
+  go-machine:
     working_directory: ~/go/src/github.com/hashicorp/nomad
     machine:
       image: ubuntu-1604:201903-01
@@ -35,9 +35,13 @@ jobs:
     parameters:
       test_packages:
         type: string
-        default: "./..."
+        default: ""
+      exclude_packages:
+        type: string
+        default: ""
     environment:
       GOTEST_PKGS: "<< parameters.test_packages >>"
+      GOTEST_EXCLUDE_PKGS: "<< parameters.exclude_packages >>"
       GOPATH: /home/circleci/go
       GOTESTSUM_JUNITFILE: /tmp/results.xml
       GOMAXPROCS: 1
@@ -48,15 +52,19 @@ jobs:
       - store_test_results:
           path: /tmp/results.xml
 
-  test-priv:
-    machine: true
-    working_directory: ~/go/src/github.com/hashicorp/nomad
+  test-machine:
+    executor: go-machine
+    parameters:
+      test_packages:
+        type: string
+        default: ""
     environment:
-      GOTEST_PKGS: "./drivers/..."
+      GOTEST_PKGS: "<< parameters.test_packages >>"
       GOTESTSUM_JUNITFILE: /tmp/results.xml
       GOPATH: /home/circleci/go
       GOVERSION: 1.11.5
       PROTOC_VERSION: 3.6.1
+      GOMAXPROCS: 1
     steps:
       - checkout
       - run:
@@ -76,8 +84,8 @@ jobs:
                 && sudo mv /tmp/protoc3/include/* /usr/local/include/ \
                 && sudo ln -s /usr/local/bin/protoc /usr/bin/protoc \
                 && rm -rf /tmp/protoc*
-      - run: make bootstrap
-      - run: PATH="$GOPATH/bin:/usr/local/go/bin:$PATH" make test
+      - run: PATH="$GOPATH/bin:/usr/local/go/bin:$PATH" make bootstrap
+      - run: PATH="$GOPATH/bin:/usr/local/go/bin:$PATH" make travis
       - store_test_results:
           path: /tmp/results.xml
 
@@ -124,12 +132,13 @@ workflows:
       - test-container:
           test_packages: "./api/..."
       - test-container:
-          test_packages: "./command/..."
-      - test-container:
           test_packages: "./devices/..."
       - test-container:
-          test_packages: "./acl/...|./scheduler/...|./testutil/...|./version/...|./helper/..."
-      - test-priv
+          exclude_packages: "./api|./client|./drivers/docker|./drivers/exec|./nomad|./devices"
+      - test-machine:
+          test_packages: "./drivers/docker"
+      - test-machine:
+          test_packages: "./drivers/exec"
       # - build-deps-image:
       #     context: dani-test
       #     filters:
