@@ -47,8 +47,7 @@ jobs:
       GOMAXPROCS: 1
     steps:
       - checkout
-      - run: make dev
-      - run: gotestsum -f short-verbose $GOTEST_PKGS -- -timeout 15m
+      - run: make travis
       - store_test_results:
           path: /tmp/results.xml
 
