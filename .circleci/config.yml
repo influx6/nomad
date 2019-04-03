@@ -47,7 +47,14 @@ jobs:
       GOMAXPROCS: 1
     steps:
       - checkout
-      - run: make travis
+      - run: |
+          if [ -z "$GOTEST_EXCLUDE_PKGS" ];
+          then
+            unset GOTEST_EXCLUDE_PKGS
+          else
+            unset GOTEST_PKGS
+          fi
+          make travis
       - store_test_results:
           path: /tmp/results.xml
 
