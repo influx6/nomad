@@ -126,18 +126,25 @@ workflows:
     jobs:
       - lint
       - test-container:
+          name: "test-client"
           test_packages: "./client/..."
       - test-container:
+          name: "test-nomad"
           test_packages: "./nomad/..."
       - test-container:
+          name: "test-api"
           test_packages: "./api/..."
       - test-container:
+          name: "test-devices"
           test_packages: "./devices/..."
       - test-container:
+          name: "test-other"
           exclude_packages: "./api|./client|./drivers/docker|./drivers/exec|./nomad|./devices"
       - test-machine:
+          name: "test-docker"
           test_packages: "./drivers/docker"
       - test-machine:
+          name: "test-exec"
           test_packages: "./drivers/exec"
       # - build-deps-image:
       #     context: dani-test
