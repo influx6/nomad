@@ -260,7 +260,7 @@ test-nomad: dev ## Run Nomad test suites
 		$(if $(ENABLE_RACE),-race) $(if $(VERBOSE),-v) \
 		-cover \
 		-timeout=15m \
-		$(GOTEST_PKGS) $(if $(VERBOSE), >test.log ; echo $$? > exit-code)
+		$(GOTEST_PKGS)
 	@if [ $(VERBOSE) ] ; then \
 		bash -C "$(PROJECT_ROOT)/scripts/test_check.sh" ; \
 	fi
