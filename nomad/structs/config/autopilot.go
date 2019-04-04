@@ -9,7 +9,7 @@ import (
 type AutopilotConfig struct {
 	// CleanupDeadServers controls whether to remove dead servers when a new
 	// server is added to the Raft peers.
-	CleanupDeadServers *bool `mapstructure:"cleanup_dead_servers"`
+	CleanupDeadServers *bool `mapstructure:"cleanup_dead_servers" hcl:"cleanup_dead_servers"`
 
 	// ServerStabilizationTime is the minimum amount of time a server must be
 	// in a stable, healthy state before it can be added to the cluster. Only
@@ -22,19 +22,19 @@ type AutopilotConfig struct {
 
 	// MaxTrailingLogs is the amount of entries in the Raft Log that a server can
 	// be behind before being considered unhealthy.
-	MaxTrailingLogs int `mapstructure:"max_trailing_logs"`
+	MaxTrailingLogs int `mapstructure:"max_trailing_logs" hcl:"max_trailing_logs"`
 
 	// (Enterprise-only) EnableRedundancyZones specifies whether to enable redundancy zones.
-	EnableRedundancyZones *bool `mapstructure:"enable_redundancy_zones"`
+	EnableRedundancyZones *bool `mapstructure:"enable_redundancy_zones" hcl:"enable_redundancy_zones"`
 
 	// (Enterprise-only) DisableUpgradeMigration will disable Autopilot's upgrade migration
 	// strategy of waiting until enough newer-versioned servers have been added to the
 	// cluster before promoting them to voters.
-	DisableUpgradeMigration *bool `mapstructure:"disable_upgrade_migration"`
+	DisableUpgradeMigration *bool `mapstructure:"disable_upgrade_migration" hcl:"disable_upgrade_migration"`
 
 	// (Enterprise-only) EnableCustomUpgrades specifies whether to enable using custom
 	// upgrade versions when performing migrations.
-	EnableCustomUpgrades *bool `mapstructure:"enable_custom_upgrades"`
+	EnableCustomUpgrades *bool `mapstructure:"enable_custom_upgrades" hcl:"enable_custom_upgrades"`
 }
 
 // DefaultAutopilotConfig() returns the canonical defaults for the Nomad
