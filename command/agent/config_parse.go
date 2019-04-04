@@ -39,6 +39,32 @@ func ParseConfigFile(path string) (*Config, error) {
 	return config, nil
 }
 
+func ParseConfigFileDirectHCL(path string) (*Config, error) {
+	// slurp
+	path, err := filepath.Abs(path)
+	if err != nil {
+		return nil, err
+	}
+
+	f, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+	var buf bytes.Buffer
+	if _, err := io.Copy(&buf, r); err != nil {
+		return nil, err
+	}
+
+	// parse
+	c := &config.Config{}
+	err = hcl.Decode(c, buf.String())
+	if err != nil {
+		return nil, err
+	}
+	return c, nil
+}
+
 // ParseConfig parses the config from the given io.Reader.
 //
 // Due to current internal limitations, the entire contents of the
