@@ -261,9 +261,6 @@ test-nomad: dev ## Run Nomad test suites
 		-cover \
 		-timeout=15m \
 		$(GOTEST_PKGS)
-	@if [ $(VERBOSE) ] ; then \
-		bash -C "$(PROJECT_ROOT)/scripts/test_check.sh" ; \
-	fi
 
 .PHONY: e2e-test
 e2e-test: dev ## Run the Nomad e2e test suite
