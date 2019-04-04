@@ -55,9 +55,6 @@ jobs:
           else
             unset GOTEST_PKGS
           fi
-          echo "ENV ===="
-          env
-          echo "===="
           make test-nomad
       - store_test_results:
           path: /tmp
@@ -68,7 +65,11 @@ jobs:
       test_packages:
         type: string
         default: ""
+      exclude_packages:
+        type: string
+        default: ""
     environment:
+      GOTEST_EXCLUDE_PKGS: "<< parameters.exclude_packages >>"
       GOTEST_PKGS: "<< parameters.test_packages >>"
       GOTESTSUM_JUNITFILE: /tmp/results.xml
       GOPATH: /home/circleci/go
@@ -97,7 +98,15 @@ jobs:
                 && rm -rf /tmp/protoc*
       - run: env
       - run: PATH="$GOPATH/bin:/usr/local/go/bin:$PATH" make bootstrap
-      - run: PATH="$GOPATH/bin:/usr/local/go/bin:$PATH" make test-nomad
+      - run: |
+          export PATH="$GOPATH/bin:/usr/local/go/bin:$PATH"
+          if [ -z "$GOTEST_EXCLUDE_PKGS" ];
+          then
+            unset GOTEST_EXCLUDE_PKGS
+          else
+            unset GOTEST_PKGS
+          fi
+          make test-nomad
       - store_test_results:
           path: /tmp
 
