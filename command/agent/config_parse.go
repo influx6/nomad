@@ -41,6 +41,7 @@ func ParseConfigFile(path string) (*Config, error) {
 
 func ParseConfigFileDirectHCL(path string) (*Config, error) {
 	// slurp
+	var buf bytes.Buffer
 	path, err := filepath.Abs(path)
 	if err != nil {
 		return nil, err
@@ -51,13 +52,12 @@ func ParseConfigFileDirectHCL(path string) (*Config, error) {
 		return nil, err
 	}
 	defer f.Close()
-	var buf bytes.Buffer
-	if _, err := io.Copy(&buf, r); err != nil {
+	if _, err := io.Copy(&buf, f); err != nil {
 		return nil, err
 	}
 
 	// parse
-	c := &config.Config{}
+	c := &Config{}
 	err = hcl.Decode(c, buf.String())
 	if err != nil {
 		return nil, err
